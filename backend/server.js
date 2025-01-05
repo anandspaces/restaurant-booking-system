@@ -2,9 +2,6 @@
 const express = require('express');
 const bookingRoutes = require('./routes/bookingRoutes');
 
-// Load environment variables
-dotenv.config();
-
 const app = express();
 const port = 5000;
 
