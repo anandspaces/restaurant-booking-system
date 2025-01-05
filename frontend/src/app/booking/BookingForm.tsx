@@ -1,7 +1,7 @@
 // app/booking/BookingForm.tsx
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface BookingFormProps {
   onSubmit: (data: any) => void;
@@ -20,6 +20,21 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
     onSubmit(bookingData);
   };
 
+  const [availableTimes, setAvailableTimes] = useState<string[]>([]);
+
+  const fetchAvailableTimes = async (selectedDate: string) => {
+    // Simulate API call to fetch available time slots based on the selected date
+    const response = await fetch(`/api/getAvailableTimes?date=${selectedDate}`);
+    const data = await response.json();
+    setAvailableTimes(data.times);
+  };
+
+  useEffect(() => {
+    if (date) fetchAvailableTimes(date);
+  }, [date]);
+
+
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
@@ -33,7 +48,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
           className="mt-1 p-2 border border-gray-300 rounded-md w-full"
         />
       </div>
-      
+
       <div>
         <label htmlFor="time" className="block text-sm font-medium text-gray-700">Time</label>
         <input
@@ -46,6 +61,21 @@ const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
         />
       </div>
 
+      <div>
+        <label htmlFor="time" className="block text-sm font-medium text-gray-700">Time</label>
+        <select
+          id="time"
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+          required
+          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+        >
+          <option value="">Select Time</option>
+          {availableTimes.map((slot) => (
+            <option key={slot} value={slot}>{slot}</option>
+          ))}
+        </select>
+      </div>
       <div>
         <label htmlFor="guests" className="block text-sm font-medium text-gray-700">Number of Guests</label>
         <input
