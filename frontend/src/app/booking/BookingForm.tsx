@@ -35,7 +35,6 @@ export default function BookingForm() {
       // const result = await response.json();
       const result = await postBooking(data);
       alert(result.message || 'Booking successful!');
-      <BookingSummary />
     } catch (error: any) {
       alert(error.message || 'Booking failed!');
     }
