@@ -1,51 +1,53 @@
-// controllers/bookingController.js
-const Booking = require('../models/bookingModel');
+const fs = require('fs');
+const path = require('path');
+const bookingsPath = path.join(__dirname, '../data/bookings.json');
 
-// In-memory store for bookings
-let bookings = [];
+// Load bookings from JSON
+function loadBookings() {
+  if (fs.existsSync(bookingsPath)) {
+    const data = fs.readFileSync(bookingsPath);
+    return JSON.parse(data);
+  }
+  return [];
+}
 
-const createBooking = (req, res) => {
+// Save bookings to JSON
+function saveBookings(bookings) {
+  fs.writeFileSync(bookingsPath, JSON.stringify(bookings, null, 2));
+}
+
+// Get all bookings
+exports.getBookings = (req, res) => {
+  const bookings = loadBookings();
+  res.status(200).json(bookings);
+};
+
+// Create a new booking
+exports.createBooking = (req, res) => {
   const { name, contact, date, time, guests } = req.body;
 
-  // Validate input
+  // Basic validation
   if (!name || !contact || !date || !time || !guests) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  const newBooking = new Booking(
-    bookings.length + 1, // Simple ID generation
-    name,
-    contact,
-    date,
-    time,
-    guests
+  const bookings = loadBookings();
+
+  // Check for double booking
+  const isSlotTaken = bookings.some(
+    (booking) => booking.date === date && booking.time === time
   );
 
+  if (isSlotTaken) {
+    return res.status(400).json({ message: 'This time slot is already booked' });
+  }
+
+  // Create new booking
+  const newBooking = { id: Date.now(), name, contact, date, time, guests };
   bookings.push(newBooking);
-  res.status(201).json({ message: 'Booking created successfully', booking: newBooking });
+
+  // Save to file
+  saveBookings(bookings);
+
+  res.status(201).json({ message: 'Booking successful', booking: newBooking });
 };
-
-const getBooking = (req, res) => {
-  const { id } = req.params;
-  const booking = bookings.find((b) => b.id === parseInt(id));
-
-  if (!booking) {
-    return res.status(404).json({ message: 'Booking not found' });
-  }
-
-  res.json({ booking });
-};
-
-const deleteBooking = (req, res) => {
-  const { id } = req.params;
-  const index = bookings.findIndex((b) => b.id === parseInt(id));
-
-  if (index === -1) {
-    return res.status(404).json({ message: 'Booking not found' });
-  }
-
-  bookings.splice(index, 1);
-  res.json({ message: 'Booking deleted successfully' });
-};
-
-module.exports = { createBooking, getBooking, deleteBooking };

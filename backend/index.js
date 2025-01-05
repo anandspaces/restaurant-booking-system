@@ -1,16 +1,22 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 const bookingRoutes = require('./routes/bookingRoutes');
 
 const app = express();
-const port = 5000;
+const PORT = 5000;
 
-// Middleware to parse JSON data
-app.use(express.json());
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
 
-// Use the booking routes
-app.use('/api', bookingRoutes);
+// Routes
+app.use('/api/bookings', bookingRoutes);
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.get('/', (req, res) => {
+  res.send('Restaurant Booking System API');
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
