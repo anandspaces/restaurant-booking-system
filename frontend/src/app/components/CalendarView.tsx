@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Calendar from 'react-calendar';
+// import Calendar from 'react-calendar';
 
 const CalendarView = ({ onDateSelect }: { onDateSelect: (date: string) => void }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -29,7 +29,7 @@ const CalendarView = ({ onDateSelect }: { onDateSelect: (date: string) => void }
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Select Reservation Date</h2>
-      <Calendar onChange={handleDateChange} value={selectedDate} />
+      {/* <Calendar onChange={handleDateChange} value={selectedDate} /> */}
       <div className="mt-4">
         <h3 className="font-semibold">Available Time Slots</h3>
         <ul className="list-disc ml-6">
