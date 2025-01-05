@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Timeline from 'react-calendar-timeline';
-import 'react-calendar-timeline/lib/Timeline.css';
 import moment from 'moment';
 
 const TimelineView = ({ onTimeSlotSelect }: { onTimeSlotSelect: (time: string) => void }) => {

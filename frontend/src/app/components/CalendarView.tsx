@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
 
 const CalendarView = ({ onDateSelect }: { onDateSelect: (date: string) => void }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
