@@ -1,32 +1,13 @@
-// src/app/page.tsx
+import Link from 'next/link';
 
-import React, { useState } from 'react';
-// import CalendarView from './components/CalendarView';
-
-const Page = () => {
-  // const [selectedDate, setSelectedDate] = useState<string>('');
-
-  // const handleDateSelect = (date: string) => {
-  //   setSelectedDate(date);
-  // };
-
+export default function HomePage() {
   return (
-    <div>
-      <h1 className="text-4xl font-bold mb-4">Welcome to Restaurant Booking</h1>
-      <p className="mb-6 text-lg">Select a date and time for your reservation below:</p>
-
-      {/* Calendar View Component */}
-      {/* <CalendarView onDateSelect={handleDateSelect} /> */}
-
-      {/* Display selected date */}
-      {/* {selectedDate && (
-        <div className="mt-6">
-          <h2 className="text-2xl font-semibold">You have selected:</h2>
-          <p className="text-xl">Date: {selectedDate}</p>
-        </div>
-      )} */}
+    <div className="text-center">
+      <h1 className="text-4xl font-bold mb-4">Welcome to Our Restaurant</h1>
+      <p className="mb-6">Book a table with us in just a few clicks!</p>
+      <Link href="/booking" className="bg-blue-500 text-white py-2 px-4 rounded">
+        Book Now
+      </Link>
     </div>
   );
-};
-
-export default Page;
+}

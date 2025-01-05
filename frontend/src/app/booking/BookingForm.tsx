@@ -1,120 +1,93 @@
-// app/booking/BookingForm.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-interface BookingFormProps {
-  onSubmit: (data: any) => void;
-}
+const bookingSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  contact: z.string().min(10, 'Contact must be at least 10 characters'),
+  date: z.string().min(1, 'Date is required'),
+  time: z.string().min(1, 'Time is required'),
+  guests: z.number().min(1, 'At least 1 guest is required').max(10, 'Max 10 guests allowed'),
+});
 
-const BookingForm: React.FC<BookingFormProps> = ({ onSubmit }) => {
-  const [date, setDate] = useState('');
-  const [time, setTime] = useState('');
-  const [guests, setGuests] = useState('');
-  const [name, setName] = useState('');
-  const [contact, setContact] = useState('');
+type BookingFormData = z.infer<typeof bookingSchema>;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const bookingData = { date, time, guests, name, contact };
-    onSubmit(bookingData);
+export default function BookingForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<BookingFormData>({
+    resolver: zodResolver(bookingSchema),
+  });
+
+  const onSubmit: SubmitHandler<BookingFormData> = async (data) => {
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      alert(result.message || 'Booking successful!');
+    } catch (error) {
+      console.error('Booking failed:', error);
+    }
   };
-
-  const [availableTimes, setAvailableTimes] = useState<string[]>([]);
-
-  const fetchAvailableTimes = async (selectedDate: string) => {
-    // Simulate API call to fetch available time slots based on the selected date
-    const response = await fetch(`/api/getAvailableTimes?date=${selectedDate}`);
-    const data = await response.json();
-    setAvailableTimes(data.times);
-  };
-
-  useEffect(() => {
-    if (date) fetchAvailableTimes(date);
-  }, [date]);
-
-
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
-        <label htmlFor="date" className="block text-sm font-medium text-gray-700">Date</label>
+        <label className="block">Name</label>
         <input
+          {...register('name')}
+          className="border w-full p-2 rounded"
+          placeholder="Your Name"
+        />
+        {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+      </div>
+      <div>
+        <label className="block">Contact</label>
+        <input
+          {...register('contact')}
+          className="border w-full p-2 rounded"
+          placeholder="Your Contact"
+        />
+        {errors.contact && <p className="text-red-500">{errors.contact.message}</p>}
+      </div>
+      <div>
+        <label className="block">Date</label>
+        <input
+          {...register('date')}
           type="date"
-          id="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          required
-          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+          className="border w-full p-2 rounded"
         />
+        {errors.date && <p className="text-red-500">{errors.date.message}</p>}
       </div>
-
       <div>
-        <label htmlFor="time" className="block text-sm font-medium text-gray-700">Time</label>
+        <label className="block">Time</label>
         <input
+          {...register('time')}
           type="time"
-          id="time"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-          required
-          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+          className="border w-full p-2 rounded"
         />
-      </div>
-
-      <div>
-        <label htmlFor="time" className="block text-sm font-medium text-gray-700">Time</label>
-        <select
-          id="time"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-          required
-          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-        >
-          <option value="">Select Time</option>
-          {availableTimes.map((slot) => (
-            <option key={slot} value={slot}>{slot}</option>
-          ))}
-        </select>
+        {errors.time && <p className="text-red-500">{errors.time.message}</p>}
       </div>
       <div>
-        <label htmlFor="guests" className="block text-sm font-medium text-gray-700">Number of Guests</label>
+        <label className="block">Guests</label>
         <input
+          {...register('guests', { valueAsNumber: true })}
           type="number"
-          id="guests"
-          value={guests}
-          onChange={(e) => setGuests(e.target.value)}
-          required
-          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+          className="border w-full p-2 rounded"
+          placeholder="Number of Guests"
         />
+        {errors.guests && <p className="text-red-500">{errors.guests.message}</p>}
       </div>
-
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-        <input
-          type="text"
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="contact" className="block text-sm font-medium text-gray-700">Contact Number</label>
-        <input
-          type="text"
-          id="contact"
-          value={contact}
-          onChange={(e) => setContact(e.target.value)}
-          required
-          className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-        />
-      </div>
-
-      <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded-md">Book Table</button>
+      <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded">
+        Submit Booking
+      </button>
     </form>
   );
-};
-
-export default BookingForm;
+}
