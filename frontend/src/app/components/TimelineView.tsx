@@ -2,8 +2,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Timeline from 'react-calendar-timeline';
-import moment from 'moment';
+// import Timeline from 'react-calendar-timeline';
+// import moment from 'moment';
 
 const TimelineView = ({ onTimeSlotSelect }: { onTimeSlotSelect: (time: string) => void }) => {
   const [items, setItems] = useState<any[]>([]); // List of time slots as events
@@ -24,13 +24,13 @@ const TimelineView = ({ onTimeSlotSelect }: { onTimeSlotSelect: (time: string) =
   return (
     <div className="w-full">
       <h2 className="text-xl font-bold mb-4">Select Reservation Time</h2>
-      <Timeline
+      {/* <Timeline
         groups={groups}
         items={items}
         defaultTimeStart={moment().toDate()}
         defaultTimeEnd={moment().add(1, 'hour').toDate()}
         onTimeChange={onTimeSlotSelect}
-      />
+      /> */}
     </div>
   );
 };
