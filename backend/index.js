@@ -13,6 +13,11 @@ app.use(bodyParser.json());
 // Routes
 app.use('/api/bookings', bookingRoutes);
 
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`, req.body);
+  next();
+});
+
 app.get('/', (req, res) => {
   res.send('Welcome to the Restaurant Booking System API');
 });
