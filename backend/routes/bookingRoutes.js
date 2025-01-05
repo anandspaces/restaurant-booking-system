@@ -1,10 +1,15 @@
 const express = require('express');
-const { createBooking, getBookings } = require('../controllers/bookingController');
+const { getBookings, createBooking, deleteBooking } = require('../controllers/bookingController');
 
 const router = express.Router();
 
-// Routes
+// Get all bookings
 router.get('/', getBookings);
+
+// Create a new booking
 router.post('/', createBooking);
+
+// Delete a booking by ID
+router.delete('/:id', deleteBooking);
 
 module.exports = router;

@@ -14,9 +14,9 @@ app.use(bodyParser.json());
 app.use('/api/bookings', bookingRoutes);
 
 app.get('/', (req, res) => {
-  res.send('Restaurant Booking System API');
+  res.send('Welcome to the Restaurant Booking System API');
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });

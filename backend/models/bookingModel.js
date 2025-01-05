@@ -1,13 +1,24 @@
-// models/bookingModel.js
-class Booking {
-  constructor(id, name, contact, date, time, guests) {
-    this.id = id;
-    this.name = name;
-    this.contact = contact;
-    this.date = date;
-    this.time = time;
-    this.guests = guests;
+const fs = require('fs');
+const path = require('path');
+
+// Path to the bookings data file
+const bookingsPath = path.join(__dirname, '../data/bookings.json');
+
+// Load bookings from JSON file
+function loadBookings() {
+  if (fs.existsSync(bookingsPath)) {
+    const data = fs.readFileSync(bookingsPath, 'utf-8');
+    return JSON.parse(data);
   }
+  return [];
 }
 
-module.exports = Booking;
+// Save bookings to JSON file
+function saveBookings(bookings) {
+  fs.writeFileSync(bookingsPath, JSON.stringify(bookings, null, 2));
+}
+
+module.exports = {
+  loadBookings,
+  saveBookings,
+};

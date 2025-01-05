@@ -1,20 +1,4 @@
-const fs = require('fs');
-const path = require('path');
-const bookingsPath = path.join(__dirname, '../data/bookings.json');
-
-// Load bookings from JSON
-function loadBookings() {
-  if (fs.existsSync(bookingsPath)) {
-    const data = fs.readFileSync(bookingsPath);
-    return JSON.parse(data);
-  }
-  return [];
-}
-
-// Save bookings to JSON
-function saveBookings(bookings) {
-  fs.writeFileSync(bookingsPath, JSON.stringify(bookings, null, 2));
-}
+const { loadBookings, saveBookings } = require('../models/bookingModel');
 
 // Get all bookings
 exports.getBookings = (req, res) => {
@@ -26,7 +10,7 @@ exports.getBookings = (req, res) => {
 exports.createBooking = (req, res) => {
   const { name, contact, date, time, guests } = req.body;
 
-  // Basic validation
+  // Validate input
   if (!name || !contact || !date || !time || !guests) {
     return res.status(400).json({ message: 'All fields are required' });
   }
@@ -42,12 +26,29 @@ exports.createBooking = (req, res) => {
     return res.status(400).json({ message: 'This time slot is already booked' });
   }
 
-  // Create new booking
+  // Add new booking
   const newBooking = { id: Date.now(), name, contact, date, time, guests };
   bookings.push(newBooking);
 
-  // Save to file
+  // Save bookings
   saveBookings(bookings);
 
-  res.status(201).json({ message: 'Booking successful', booking: newBooking });
+  res.status(201).json({ message: 'Booking created successfully', booking: newBooking });
+};
+
+// Delete a booking by ID
+exports.deleteBooking = (req, res) => {
+  const { id } = req.params;
+
+  const bookings = loadBookings();
+  const updatedBookings = bookings.filter((booking) => booking.id !== parseInt(id, 10));
+
+  if (bookings.length === updatedBookings.length) {
+    return res.status(404).json({ message: 'Booking not found' });
+  }
+
+  // Save updated bookings
+  saveBookings(updatedBookings);
+
+  res.status(200).json({ message: 'Booking deleted successfully' });
 };
