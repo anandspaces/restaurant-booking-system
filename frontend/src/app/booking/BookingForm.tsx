@@ -3,6 +3,8 @@
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import BookingSummary from './BookingSummary';
+import { postBooking } from '@/utils/api';
 
 const bookingSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -25,15 +27,17 @@ export default function BookingForm() {
 
   const onSubmit: SubmitHandler<BookingFormData> = async (data) => {
     try {
-      const response = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      const result = await response.json();
+      // const response = await fetch('/api/bookings', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(data),
+      // });
+      // const result = await response.json();
+      const result = await postBooking(data);
       alert(result.message || 'Booking successful!');
-    } catch (error) {
-      console.error('Booking failed:', error);
+      <BookingSummary />
+    } catch (error: any) {
+      alert(error.message || 'Booking failed!');
     }
   };
 
